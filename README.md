@@ -828,19 +828,17 @@ evil-winrm -i <ip> -u <username> -p <password>
 
 ### BloodHound
 
-#### neo4j
+- bloodhound python
+```bash
+bloodhound-python -c all -u <username> -p <password> -d <domain> -dc <dc> -ns <ip> --disable-pooling -w1 --dns-timeout 30
+```
+
 - first start neo4j
 ```bash
 sudo neo4j console
 ```
 
-#### Bloodhound
 - then start bloodhound
 ```bash
 bloodhound
-```
-
-- bloodhound python
-```bash
-bloodhound-python -c all -u <username> -p <password> -d <domain> -dc <dc> -ns <ip> --disable-pooling -w1 --dns-timeout 30
 ```
