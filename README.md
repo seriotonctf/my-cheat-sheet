@@ -14,7 +14,7 @@ Some of the commands I usually use when doing HTB or other machines.
 - [Miscellaneous](#miscellaneous)
 - [Tunneling](#tunneling)
 - [Web Exploitation](#web-exploitation)
-- [Windows Enumeration & Privilege Escalation](#windows-enumeration-and-privilege-escalation)
+- [Windows Enumeration and Privilege Escalation](#windows-enumeration-and-privilege-escalation)
   
 ---
 
@@ -788,7 +788,7 @@ export http_proxy=127.0.0.1:8080
 
 ---
 
-## Windows Enumeration & Privilege Escalation
+## Windows Enumeration and Privilege Escalation
 The script below looks for Win32 services on the host with unquoted service paths, not in the Windows folder.
 ```powershell
 Get-WmiObject -Class Win32_Service | Where-Object { $*.PathName -inotmatch “`”” -and $*.PathName -inotmatch “:\\\\Windows\\\\” }| Select Name,Pathname
