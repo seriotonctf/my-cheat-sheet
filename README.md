@@ -622,7 +622,8 @@ searchsploit -m php/webapps/49876.py [module name]
 
 [https://github.com/micahvandeusen/gMSADumper](https://github.com/micahvandeusen/gMSADumper)
 
-### sucrack: https://github.com/hemp3l/sucrack
+### sucrack: 
+https://github.com/hemp3l/sucrack
 
 ### Compiled Binaries
 
