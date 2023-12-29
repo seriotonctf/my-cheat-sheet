@@ -195,13 +195,11 @@ netstat -tulpen
 netstat -an -p tcp
 ```
 
-### sockets
-
 ```bash
 ss -tlp
 ```
 
-### Python debugger [pdb]
+### Python debugger
 
 ```python
 import pdb
@@ -246,12 +244,6 @@ find / -type f -group users 2>/dev/null
 
 ```bash
 find / -user root -perm -4000 -print 2>/dev/null
-```
-
-##### using Find to find SUID binaries for root
-
-```bash
-find / -perm +6000 2>/dev/null | grep '/bin'
 ```
 
 ### JohnTheRipper
