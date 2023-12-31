@@ -534,7 +534,7 @@ redis-cli -h <IP> -a '$secret'
 KEYS *
 ```
 
-#### get a specific key
+#### retrieve a range of elements from a list stored at a specific key
 ```bash
 LRANGE authlist 1 100
 ```
