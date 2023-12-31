@@ -1,5 +1,5 @@
 # Cheat Sheet
-Some of the commands I usually use when doing HTB or other machines.
+Some of the commands/tools I often use when doing machines on HTB and similar platforms
 
 ## Table of Contents
 - [Scan](#scan)
