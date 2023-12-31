@@ -29,7 +29,7 @@ sudo nmap -p- -sV -sC -oA nmap.out $IP --min-rate=5000
 nmap -sV -sC $IP -oN basic_scan.nmap
 ```
 
-#### Scan a specific port
+#### Scan a specific port(s) (e.g. port 22 and 80)
 ```bash
 nmap -sC -sV -p22,80 -Pn -oN nmap $IP
 ```
@@ -51,7 +51,7 @@ sudo rustscan -u 6500 -b 3000 -a $IP -sC -sV -oN scan.txt
 
 #### Gobuster
 ```bash
-gobuster dir -w /usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-medium.txt -u $IP
+gobuster dir -w /usr/share/dirbuster/wordlists/directory-list-lowercase-2.3-medium.txt -u <URL>
 ```
 
 ```bash
@@ -59,11 +59,11 @@ gobuster dir -u <URL> -w /usr/share/wordlists/dirb/common.txt -o output.txt
 ```
 
 ```bash
-gobuster dir -e -t50 -q -x php,txt,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u $IP
+gobuster dir -e -t50 -q -x php,txt,html -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u <URL>
 ```
 
 ```bash
-gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -u $url -o gobuster.out
+gobuster dir -w /usr/share/seclists/Discovery/Web-Content/raft-small-words.txt -u <URL> -o gobuster.out
 ```
 
 #### FFUF
